@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MAOS — Beauty · Selfcare · Lifestyle. Más que productos, es una forma de sentirte bien." />
+  <meta name="theme-color" content="#1D0F0A" />
+  <title>MAOS · Beauty · Selfcare · Lifestyle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --cream:       #EDD8C4;
+      --cream-light: #F5E9DB;
+      --cream-pale:  #FAF4ED;
+      --rose:        #C4857A;
+      --rose-light:  #D9A89F;
+      --sand:        #A8895A;
+      --sand-light:  #C4A97A;
+      --sand-glow:   #D4B87A;
+      --mahogany:    #29170E;
+      --mahogany-mid:#5C2E1A;
+
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body:    'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --radius-card:  16px;
+      --t:            0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--cream-pale);
+      color: var(--mahogany);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      cursor: default;
+    }
+
+    body.is-intro {
+      overflow: hidden;
+    }
+
+    /* ========== INTRO OVERLAY (Light Luxury Warm Cream Theme) ========== */
+    .intro-loader {
+      position: fixed; inset: 0; z-index: 99990;
+      background: linear-gradient(180deg,
+        #DDC5B1 0%, #E6CFBD 25%, #EEDCC8 50%,
+        #F4E7DA 75%, #FAF4ED 100%);
+      transition: opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: auto;
+    }
+    body.page-active .intro-loader {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-canvas {
+      position: absolute; inset: 0; pointer-events: none; width: 100%; height: 100%; z-index: 1;
+      transition: opacity 1.2s ease;
+    }
+    body.page-active .loader-canvas {
+      opacity: 0;
+    }
+
+    /* CONTROLS (Progress bar) */
+    .loader-controls {
+      position: fixed; top: calc(42vh + 115px); left: 50%; transform: translateX(-50%);
+      z-index: 100005; display: flex; flex-direction: column; align-items: center;
+      transition: opacity 0.5s ease;
+    }
+    .loader-controls.fade-out {
+      opacity: 0; pointer-events: none;
+    }
+
+    .loader-bar-wrap {
+      width: 140px; height: 2.5px;
+      background: rgba(41, 23, 14, 0.12);
+      border-radius: 4px; overflow: hidden;
+    }
+    .loader-bar-fill {
+      width: 0%; height: 100%;
+      background: linear-gradient(90deg, var(--rose), var(--sand-glow), var(--mahogany));
+      border-radius: 4px;
+      transition: width 2.2s cubic-bezier(0.1, 0.7, 0.1, 1);
+      box-shadow: 0 0 10px rgba(168,137,90,0.5);
+    }
+
+    .loader-skip-btn {
+      margin-top: 16px;
+      background: transparent; border: none;
+      color: rgba(245,233,219,0.55);
+      font-family: var(--font-body); font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      cursor: pointer; padding: 6px 14px;
+      border-radius: 12px; transition: var(--t);
+    }
+    .loader-skip-btn:hover {
+      color: var(--cream-light);
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* ========== BACKGROUND ========== */
+    .page-bg {
+      position: fixed; inset: 0; z-index: 0;
+      background: linear-gradient(180deg,
+        #E0C9B6 0%, #E7D1BF 20%, #EEDCC8 40%,
+        #F3E5D6 58%, #F7EDE3 75%, #FDFAF6 100%);
+      will-change: transform;
+      contain: strict;
+    }
+
+    /* ========== LIQUID ORGANIC PATTERN (Patrón fluido difuminado del usuario) ========== */
+    .bg-liquid-pattern {
+      position: fixed; inset: -50px; z-index: 0;
+      pointer-events: none;
+      background-image: url('liquid-pattern.png');
+      background-repeat: repeat;
+      background-size: 520px 520px;
+      filter: blur(3.5px) contrast(135%);
+      opacity: 0.32;
+      mix-blend-mode: multiply;
+      will-change: transform;
+      contain: strict;
+      animation: liquidPatternMove 40s ease-in-out infinite alternate;
+    }
+    @keyframes liquidPatternMove {
+      0%   { transform: translate3d(0, 0, 0) scale(1); }
+      50%  { transform: translate3d(25px, 30px, 0) scale(1.04); }
+      100% { transform: translate3d(-18px, 40px, 0) scale(1.06); }
+    }
+
+    /* ========== GLOW ORBs — animated blobs ========== */
+    .glow-orbs {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none; overflow: hidden;
+      contain: strict;
+    }
+    .glow-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(85px);
+      opacity: 0.38;
+      will-change: transform;
+      animation: orbFloat var(--dur) ease-in-out infinite alternate;
+    }
+    .orb-1 {
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, #C4857A66, transparent 70%);
+      top: -60px; left: -80px;
+      --dur: 8s;
+    }
+    .orb-2 {
+      width: 270px; height: 270px;
+      background: radial-gradient(circle, #A8895A55, transparent 70%);
+      bottom: 10%; right: -60px;
+      --dur: 10s;
+      animation-delay: -3s;
+    }
+    .orb-3 {
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, #D9A89F55, transparent 70%);
+      top: 40%; left: 30%;
+      --dur: 12s;
+      animation-delay: -6s;
+    }
+    @keyframes orbFloat {
+      0%   { transform: translate3d(0, 0, 0) scale(1); }
+      100% { transform: translate3d(40px, -30px, 0) scale(1.15); }
+    }
+
+    /* ========== CURSOR GLOW (desktop) ========== */
+    
+
+    /* ========== PARTICLES ========== */
+    .particles {
+      position: fixed; inset: 0; z-index: 1;
+      pointer-events: none; overflow: hidden;
+      contain: strict;
+    }
+    .particle {
+      position: absolute; color: var(--sand); opacity: 0;
+      will-change: transform, opacity;
+      animation: floatP var(--dur, 9s) ease-in-out var(--delay, 0s) infinite;
+    }
+    @keyframes floatP {
+      0%   { opacity: 0; transform: translate3d(0, 105vh, 0) scale(0.5) rotate(0deg); }
+      20%  { opacity: 0.30; }
+      80%  { opacity: 0.15; }
+      100% { opacity: 0; transform: translate3d(0, -15vh, 0) scale(1.3) rotate(200deg); }
+    }
+
+    /* ========== WRAPPER ========== */
+    .wrapper {
+      position: relative; z-index: 2;
+      max-width: 480px; margin: 0 auto;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding-top: 240px; /* Space reserved for hero logo resting at top */
+    }
+
+    /* ========== THE ONLY SINGLE HERO LOGO IN THE DOM ========== */
+    .hero-logo-area {
+      width: 100%; max-width: 420px;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none; user-select: none;
+      z-index: 100000;
+      /* Positioned FIXED during intro, then smoothly glides UP to header */
+      position: fixed;
+      top: 42vh; left: 50%;
+      transform: translate(-50%, -50%) scale(1.05);
+      padding: 0 20px;
+      transition: top 1.8s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* When page becomes active, logo glides smoothly to top header position! */
+    body.page-active .hero-logo-area {
+      top: 135px;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .hero-logo-svg {
+      width: 360px; max-width: 88%; height: auto; overflow: visible;
+    }
+
+    /* LOGO TEXT COLOR MORPHING (Light Theme Intro) */
+    .logo-text-fill {
+      transition: fill 1.8s ease, filter 1.8s ease, opacity 1.1s ease, transform 1.1s ease;
+      opacity: 0; transform: scale(0.92);
+    }
+    .logo-text-fill.active {
+      opacity: 1; transform: scale(1);
+    }
+    body.is-intro .logo-text-fill {
+      fill: url(#logoGrad);
+      filter: drop-shadow(0 6px 18px rgba(41,23,14,0.14));
+    }
+    body.page-active .logo-text-fill {
+      fill: url(#logoGrad);
+      filter: none;
+    }
+
+    /* SUBTITLE FADE OUT ON PAGE READY (Incorporated into Bio) */
+    .logo-sub-fill {
+      transition: fill 1.2s ease, opacity 0.8s ease, transform 0.8s ease;
+      opacity: 0; transform: translateY(8px);
+    }
+    .logo-sub-fill.active {
+      opacity: 0.95; transform: translateY(0);
+    }
+    body.is-intro .logo-sub-fill {
+      fill: #6A3324;
+    }
+    body.page-active .logo-sub-fill {
+      opacity: 0; transform: translateY(12px);
+      pointer-events: none;
+    }
+
+    /* STAR IN O — THE PROTAGONIST */
+    .star-aura {
+      opacity: 0; transform: scale(0.2);
+      transform-origin: 315px 63px;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      pointer-events: none;
+    }
+    .star-aura.ignite {
+      opacity: 1; transform: scale(1.8);
+      animation: auraPulseLoader 1.6s ease-in-out infinite alternate;
+    }
+    @keyframes auraPulseLoader {
+      0%   { transform: scale(1.4); filter: drop-shadow(0 0 15px rgba(255,245,214,0.8)); }
+      100% { transform: scale(2.4); filter: drop-shadow(0 0 35px rgba(255,245,214,1)); }
+    }
+    body.page-active .star-aura {
+      opacity: 0.95; transform: scale(1);
+      animation: auraPulse 2.8s ease-in-out infinite;
+    }
+    @keyframes auraPulse {
+      0%, 100% { opacity: 0; transform: scale(0.6); }
+      45%, 55% { opacity: 0.95; transform: scale(1.4); }
+    }
+
+    .logo-star {
+      opacity: 0; transform: scale(0.1) rotate(-120deg);
+      transform-origin: 315px 63px;
+      transition: all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1), fill 1.8s ease;
+    }
+    .logo-star.ignite {
+      opacity: 1; transform: scale(1.35) rotate(0deg);
+      fill: #FFFFFF;
+      filter: drop-shadow(0 0 15px rgba(255,255,255,1)) drop-shadow(0 0 32px rgba(212,184,122,1));
+      animation: starRadiance 1.4s ease-in-out infinite alternate;
+    }
+    @keyframes starRadiance {
+      0%   { transform: scale(1.25) rotate(0deg); filter: drop-shadow(0 0 12px rgba(255,255,255,0.9)); }
+      100% { transform: scale(1.50) rotate(15deg); filter: drop-shadow(0 0 25px rgba(255,255,255,1)) drop-shadow(0 0 45px rgba(212,184,122,1)); }
+    }
+    body.page-active .logo-star {
+      opacity: 1; fill: #A8895A;
+      animation: starSparkle 2.8s ease-in-out infinite;
+    }
+    @keyframes starSparkle {
+      0% {
+        opacity: 0.70; transform: scale(0.94); fill: #A8895A;
+        filter: drop-shadow(0 0 2px rgba(168,137,90,0.5));
+      }
+      40% {
+        opacity: 1; transform: scale(1.22); fill: #FFF3CD;
+        filter: drop-shadow(0 0 10px rgba(255,243,205,1)) drop-shadow(0 0 18px rgba(212,184,122,0.9));
+      }
+      55% {
+        opacity: 1; transform: scale(1.15); fill: #FFFFFF;
+        filter: drop-shadow(0 0 14px rgba(255,255,255,1)) drop-shadow(0 0 22px rgba(212,184,122,0.95));
+      }
+      70% {
+        opacity: 1; transform: scale(1.22); fill: #FFF3CD;
+        filter: drop-shadow(0 0 10px rgba(255,243,205,1)) drop-shadow(0 0 18px rgba(212,184,122,0.9));
+      }
+      100% {
+        opacity: 0.70; transform: scale(0.94); fill: #A8895A;
+        filter: drop-shadow(0 0 2px rgba(168,137,90,0.5));
+      }
+    }
+
+    /* ========== CONTENT ELEMENTS — Emerge & unfold out from underneath gliding logo ========== */
+    .profile-section,
+    .divider,
+    .links-section,
+    .footer-area {
+      opacity: 0;
+      transform: translateY(70px);
+      transition: opacity 1.2s ease, transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Cascading unfold of direct access cards as logo glides up */
+    body.page-active .profile-section {
+      opacity: 1; transform: translateY(0);
+      transition-delay: 0.4s;
+    }
+    body.page-active .divider {
+      opacity: 1; transform: translateY(0);
+      transition-delay: 0.6s;
+    }
+    body.page-active .links-section {
+      opacity: 1; transform: translateY(0);
+      transition-delay: 0.7s;
+    }
+    body.page-active .link-card {
+      opacity: 1; transform: translateY(0);
+    }
+    body.page-active .card-wa {
+      transition-delay: 0.8s;
+    }
+    body.page-active .card-ig {
+      transition-delay: 1.0s;
+    }
+    body.page-active .card-tt {
+      transition-delay: 1.2s;
+    }
+    body.page-active .footer-area {
+      opacity: 1; transform: translateY(0);
+      transition-delay: 1.4s;
+    }
+
+    /* BIO SECTION */
+    .profile-section {
+      width: 100%; display: flex; flex-direction: column;
+      align-items: center; padding: 0 24px; margin-top: -6px;
+      position: relative; z-index: 3;
+    }
+
+    .bio-line {
+      font-family: var(--font-body); font-weight: 400; font-size: 14px;
+      color: var(--mahogany); text-align: center;
+      line-height: 1.6; min-height: 46px; letter-spacing: 0.2px;
+    }
+
+    .typing-cursor {
+      display: inline-block; width: 2px; height: 15px;
+      background: var(--rose); margin-left: 3px;
+      border-radius: 1px; vertical-align: -1px;
+      animation: blink 0.8s ease-in-out infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+    /* DIVIDER */
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 26px 0 24px; width: 100%; max-width: 220px;
+    }
+    .divider-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(to right, transparent, var(--sand-light), transparent);
+    }
+    .divider-dot { font-size: 12px; color: var(--sand); }
+
+    /* LINK CARDS */
+    .links-section {
+      width: 100%; padding: 0 22px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+
+    .link-card {
+      position: relative; width: 100%;
+      display: flex; align-items: center; justify-content: center;
+      padding: 18px 52px; border-radius: var(--radius-card);
+      text-decoration: none; color: var(--mahogany);
+      text-align: center; overflow: hidden;
+      transform-style: preserve-3d; perspective: 800px;
+      will-change: transform;
+      contain: layout style;
+    }
+
+    .card-glow {
+      position: absolute; inset: 0;
+      border-radius: var(--radius-card); pointer-events: none;
+      background: radial-gradient(circle at var(--glow-x, 50%) var(--glow-y, 50%),
+        rgba(212,184,122,0.18), transparent 60%);
+      opacity: 0; transition: opacity 0.35s;
+    }
+    .link-card:hover .card-glow { opacity: 1; }
+
+    .link-card .shine {
+      position: absolute; top: 0; left: 0;
+      width: 45%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+      transform: translateX(-100%) skewX(-20deg); pointer-events: none;
+      will-change: transform;
+    }
+
+    .link-card .ripple {
+      position: absolute; border-radius: 50%;
+      transform: scale(0); pointer-events: none;
+    }
+    @keyframes rippleA { to { transform: scale(4); opacity: 0; } }
+
+    .sparkle-container {
+      position: absolute; inset: 0;
+      pointer-events: none; overflow: hidden;
+      border-radius: var(--radius-card);
+    }
+    .sparkle {
+      position: absolute; font-size: 10px; color: var(--sand-glow);
+      opacity: 0; pointer-events: none;
+      animation: sparkleAnim 0.8s ease forwards;
+    }
+    @keyframes sparkleAnim {
+      0%   { opacity: 1; transform: translate(0, 0) scale(0.5) rotate(0deg); }
+      100% { opacity: 0; transform: translate(var(--sx), var(--sy)) scale(1.2) rotate(180deg); }
+    }
+
+    /* Pure Frosted Glassmorphism Link Cards */
+    .link-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.40) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.70);
+      box-shadow:
+        0 12px 32px -6px rgba(41, 23, 14, 0.08),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.70);
+      backdrop-filter: blur(20px) saturate(120%);
+      -webkit-backdrop-filter: blur(20px) saturate(120%);
+      transition: var(--t), background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+    .link-card:hover {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.50) 100%);
+      border-color: rgba(255, 255, 255, 0.90);
+      box-shadow:
+        0 18px 44px -8px rgba(41, 23, 14, 0.14),
+        inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.85);
+    }
+
+    .card-wa .link-label,
+    .card-ig .link-label,
+    .card-tt .link-label  { color: #29170E; font-weight: 700; }
+
+    .card-wa .link-handle,
+    .card-ig .link-handle,
+    .card-tt .link-handle { color: #5C2E1A; font-weight: 600; }
+
+    .card-wa .link-arrow,
+    .card-ig .link-arrow,
+    .card-tt .link-arrow  { color: #462213; }
+
+    .card-wa .icon-circle,
+    .card-ig .icon-circle,
+    .card-tt .icon-circle { background: rgba(255, 255, 255, 0.40); border: 1px solid rgba(255, 255, 255, 0.50); }
+
+    .card-wa .ripple,
+    .card-ig .ripple,
+    .card-tt .ripple      { background: rgba(255, 255, 255, 0.40); }
+
+    .icon-circle {
+      position: absolute; left: 16px;
+      flex-shrink: 0; width: 44px; height: 44px;
+      border-radius: 50%; background: rgba(168,137,90,0.14);
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--t);
+    }
+
+    .link-text {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; width: 100%;
+    }
+    .link-label {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: 14px; letter-spacing: 2px; text-transform: uppercase; line-height: 1.2;
+    }
+    .link-handle {
+      font-family: var(--font-display); font-style: italic;
+      font-size: 14px; color: var(--mahogany-mid); margin-top: 3px; line-height: 1.2; font-weight: 500;
+    }
+    .link-arrow {
+      position: absolute; right: 20px; font-size: 18px; color: var(--sand);
+      opacity: 0.5; transition: var(--t);
+    }
+    .link-card:hover .link-arrow {
+      opacity: 1; transform: translateX(4px);
+    }
+
+    /* FOOTER */
+    .footer-area {
+      width: 100%; padding: 0 22px;
+      display: flex; flex-direction: column; align-items: center;
+      margin-top: 26px; padding-top: 0; padding-bottom: 44px;
+    }
+    .footer-divider {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%; max-width: 220px; margin-bottom: 22px;
+    }
+    .footer-quote {
+      font-family: var(--font-display); font-style: italic;
+      font-size: 15px; color: var(--mahogany); text-align: center;
+    }
+    .footer-copy {
+      margin-top: 10px; font-family: var(--font-body);
+      font-size: 9.5px; letter-spacing: 3.5px; text-transform: uppercase;
+      color: var(--sand); font-weight: 500;
+    }
+
+    @media (max-width: 380px) {
+      .hero-logo-area { max-width: 340px; }
+      .hero-logo-svg  { width: 310px; }
+      .link-card      { padding: 16px 44px; }
+      .links-section  { padding: 0 16px; }
+    }
+    @media (min-width: 600px) {
+      .hero-logo-svg { width: 400px; }
+      .links-section { padding: 0 30px; }
+    }
+    @media (hover: none) {
+      .cursor-glow { display: none; }
+    }
+  </style>
+</head>
+<body class="is-intro">
+
+  <!-- INTRO LOADER OVERLAY (Dark Luxury Curtain + Canvas Shockwave) -->
+  <div id="introLoader" class="intro-loader" role="dialog" aria-label="Cargando MAOS">
+    <canvas id="loaderCanvas" class="loader-canvas"></canvas>
+
+    <!-- PROGRESS CONTROLS -->
+    <div id="loaderControls" class="loader-controls">
+      <div class="loader-bar-wrap">
+        <div class="loader-bar-fill" id="loaderBar"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-bg" aria-hidden="true"></div>
+
+  <!-- Patrón fluido difuminado del usuario (cuerpo al fondo) -->
+  <div class="bg-liquid-pattern" aria-hidden="true"></div>
+
+  <!-- Animated glow orbs -->
+  <div class="glow-orbs" aria-hidden="true">
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+  </div>
+
+  <!-- Cursor-following glow (desktop) -->
+  
+
+  <div class="particles" id="particles" aria-hidden="true"></div>
+
+  <!-- ========== THE UNIFIED SINGLE HERO LOGO IN DOM ========== -->
+  <div id="heroLogoArea" class="hero-logo-area" aria-hidden="true">
+    <svg id="mainLogoSvg" class="hero-logo-svg" viewBox="0 0 500 145" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MAOS logo">
+      <defs>
+        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#29170E" />
+          <stop offset="100%" stop-color="#462213" />
+        </linearGradient>
+        <linearGradient id="introLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#F5E9DB" />
+          <stop offset="100%" stop-color="#E2CCBA" />
+        </linearGradient>
+        <radialGradient id="starGlowGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#FFF5D6" stop-opacity="0.95" />
+          <stop offset="40%" stop-color="#D4B87A" stop-opacity="0.5" />
+          <stop offset="100%" stop-color="#A8895A" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="loaderStarGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" />
+          <stop offset="30%" stop-color="#FFF3CD" stop-opacity="0.95" />
+          <stop offset="65%" stop-color="#D4B87A" stop-opacity="0.65" />
+          <stop offset="100%" stop-color="#A8895A" stop-opacity="0" />
+        </radialGradient>
+      </defs>
+
+      <!-- M A O S -->
+      <text id="logoText" class="logo-text-fill" x="250" y="102" text-anchor="middle"
+        font-family="'Cormorant Garamond', Georgia, serif"
+        font-weight="600" font-size="124" fill="url(#introLogoGrad)"
+        letter-spacing="16">MAOS</text>
+
+      <!-- Star aura glow behind star inside O -->
+      <circle id="starAura" class="star-aura" cx="315" cy="63" r="28" fill="url(#loaderStarGlow)" />
+      <path id="logoStar" class="logo-star"
+        d="M 315,50 C 315,59 311,63 302,63 C 311,63 315,72 315,76 C 315,72 319,63 328,63 C 319,63 315,59 315,50 Z"
+        fill="#FFF5D6"/>
+
+      <!-- BEAUTY · SELFCARE · LIFESTYLE -->
+      <text id="logoSub" class="logo-sub-fill" x="250" y="167" text-anchor="middle"
+        font-family="'Plus Jakarta Sans', system-ui, sans-serif"
+        font-weight="600" font-size="12.5" fill="#D9A89F"
+        letter-spacing="5">BEAUTY  ·  SELFCARE  ·  LIFESTYLE</text>
+    </svg>
+  </div>
+
+  <main class="wrapper" role="main">
+
+    <!-- ========== BIO SECTION ========== -->
+    <section class="profile-section">
+      <p class="bio-line" id="bioText"></p>
+    </section>
+
+    <!-- Divider -->
+    <div class="divider" aria-hidden="true">
+      <div class="divider-line"></div>
+      <span class="divider-dot">✦</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- ========== LINK BUTTONS — CAJONES DE ACCESO DIRECTO ========== -->
+    <nav class="links-section" aria-label="Links de MAOS">
+
+      <!-- WhatsApp -->
+      <a id="link-whatsapp" href="https://wa.me/qr/SAOWA5ZO62Y7F1"
+        target="_blank" rel="noopener noreferrer"
+        class="link-card card-wa">
+        <div class="card-glow"></div>
+        <div class="sparkle-container"></div>
+        <div class="shine"></div>
+        <div class="icon-circle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.05 21.95l4.9-1.365A9.935 9.935 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" stroke="#29170E" stroke-width="1.4" fill="none"/>
+            <path d="M16.5 13.88c-.22-.11-1.3-.64-1.5-.71-.2-.08-.35-.11-.5.11s-.57.71-.7.86-.26.17-.48.06c-.22-.11-.93-.34-1.77-1.1-.65-.58-1.1-1.31-1.22-1.53-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.39.11-.13.14-.22.22-.37.07-.14.03-.27-.02-.38-.05-.11-.5-1.2-.68-1.65-.18-.43-.37-.37-.5-.38h-.43c-.15 0-.4.06-.6.28-.21.22-.8.78-.8 1.9s.82 2.2.93 2.36c.11.14 1.6 2.45 3.88 3.44.54.23.97.37 1.3.48.55.17 1.05.14 1.44.09.44-.06 1.35-.55 1.54-1.08.19-.54.19-1 .13-1.1-.06-.09-.22-.14-.44-.25z" fill="#29170E"/>
+          </svg>
+        </div>
+        <div class="link-text">
+          <div class="link-label">WhatsApp</div>
+          <div class="link-handle">Escríbenos directamente</div>
+        </div>
+        <span class="link-arrow">→</span>
+      </a>
+
+      <!-- Instagram -->
+      <a id="link-instagram" href="https://www.instagram.com/maos.peru"
+        target="_blank" rel="noopener noreferrer"
+        class="link-card card-ig">
+        <div class="card-glow"></div>
+        <div class="sparkle-container"></div>
+        <div class="shine"></div>
+        <div class="icon-circle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="#29170E" stroke-width="1.5"/>
+            <circle cx="12" cy="12" r="4.2" stroke="#29170E" stroke-width="1.5"/>
+            <circle cx="17.5" cy="6.5" r="1.1" fill="#29170E"/>
+          </svg>
+        </div>
+        <div class="link-text">
+          <div class="link-label">Instagram</div>
+          <div class="link-handle">@maos.peru</div>
+        </div>
+        <span class="link-arrow">→</span>
+      </a>
+
+      <!-- TikTok -->
+      <a id="link-tiktok" href="https://www.tiktok.com/@maosperu"
+        target="_blank" rel="noopener noreferrer"
+        class="link-card card-tt">
+        <div class="card-glow"></div>
+        <div class="sparkle-container"></div>
+        <div class="shine"></div>
+        <div class="icon-circle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75c-.33.01-.66-.02-1.01-.06z" fill="#29170E"/>
+          </svg>
+        </div>
+        <div class="link-text">
+          <div class="link-label">TikTok</div>
+          <div class="link-handle">@maosperu</div>
+        </div>
+        <span class="link-arrow">→</span>
+      </a>
+
+    </nav>
+
+    <!-- ========== FOOTER ========== -->
+    <div class="footer-area">
+      <div class="footer-divider" aria-hidden="true">
+        <div class="divider-line"></div>
+        <span class="divider-dot">✦</span>
+        <div class="divider-line"></div>
+      </div>
+      <p class="footer-quote">"Tu esencia, nuestro propósito."</p>
+      <p class="footer-copy">© 2026 MAOS · Perú</p>
+    </div>
+
+  </main>
+
+  <script>
+  (function() {
+    'use strict';
+
+    // ==========================================
+    //  0. SINGLE-STAGE FLUX TRANSITION ENGINE
+    // ==========================================
+    const introLoader   = document.getElementById('introLoader');
+    const loaderCanvas  = document.getElementById('loaderCanvas');
+    const loaderBar     = document.getElementById('loaderBar');
+    const loaderControls= document.getElementById('loaderControls');
+    const logoText      = document.getElementById('logoText');
+    const logoStar      = document.getElementById('logoStar');
+    const starAura      = document.getElementById('starAura');
+    const logoSub       = document.getElementById('logoSub');
+
+    let ctx = loaderCanvas ? loaderCanvas.getContext('2d') : null;
+    let canvasW = 0, canvasH = 0;
+    let loaderParticles = [];
+    let isLoaderActive = true;
+    let animationFrameId = null;
+
+    // Pre-computed color arrays (avoid allocation in hot loops)
+    const BURST_COLORS = ['#A8895A', '#C4857A', '#D4B87A', '#5C2E1A', '#FFF2CE'];
+    const AMBIENT_COLORS = ['#A8895A', '#C4857A', '#D4B87A', '#5C2E1A'];
+    const SPARKLE_SYMS = ['✦','✧','✸','·'];
+    const TWO_PI = Math.PI * 2;
+
+    function resizeCanvas() {
+      if (!loaderCanvas) return;
+      canvasW = loaderCanvas.width = window.innerWidth;
+      canvasH = loaderCanvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Canvas particle — using prototype for memory efficiency
+    function CanvasParticle(x, y, isBurst) {
+      this.isBurst = isBurst;
+      if (isBurst) {
+        const angle = Math.random() * TWO_PI;
+        const speed = 2 + Math.random() * 8;
+        this.x = x;
+        this.y = y;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.size = 1.8 + Math.random() * 3.5;
+        this.life = 1;
+        this.decay = 0.015 + Math.random() * 0.02;
+        this.color = BURST_COLORS[(Math.random() * 5) | 0];
+      } else {
+        this.x = Math.random() * canvasW;
+        this.y = Math.random() * canvasH;
+        this.vx = (Math.random() - 0.5) * 0.6;
+        this.vy = -0.4 - Math.random() * 0.8;
+        this.size = 1 + Math.random() * 2.2;
+        this.life = Math.random();
+        this.decay = 0.005 + Math.random() * 0.01;
+        this.color = AMBIENT_COLORS[(Math.random() * 4) | 0];
+      }
+    }
+
+    // Reduced from 45 to 30 ambient particles
+    for (let i = 0; i < 30; i++) {
+      loaderParticles.push(new CanvasParticle(0, 0, false));
+    }
+
+    function renderLoaderCanvas() {
+      if (!isLoaderActive || !ctx) return;
+      ctx.clearRect(0, 0, canvasW, canvasH);
+
+      // Use swap-remove instead of splice (O(1) vs O(n))
+      let i = loaderParticles.length;
+      while (i-- > 0) {
+        const p = loaderParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= p.decay;
+
+        if (p.life <= 0) {
+          // Swap with last element and pop (O(1) removal)
+          if (!p.isBurst && loaderParticles.length < 35) {
+            // Reuse the slot with a new ambient particle
+            loaderParticles[i] = new CanvasParticle(0, 0, false);
+          } else {
+            loaderParticles[i] = loaderParticles[loaderParticles.length - 1];
+            loaderParticles.pop();
+          }
+          continue;
+        }
+
+        // Inline draw (avoid save/restore per particle — batch shadow setting)
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = '#D4B87A';
+        ctx.shadowBlur = p.isBurst ? 10 : 4;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, TWO_PI);
+        ctx.fill();
+      }
+      // Reset after batch
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+
+      animationFrameId = requestAnimationFrame(renderLoaderCanvas);
+    }
+    renderLoaderCanvas();
+
+    function triggerStarBurst() {
+      if (!logoStar || !loaderCanvas) return;
+      const rect = logoStar.getBoundingClientRect();
+      const cx = rect.left + rect.width * 0.5;
+      const cy = rect.top + rect.height * 0.5;
+      // Reduced from 85 to 45 burst particles
+      for (let i = 0; i < 45; i++) {
+        loaderParticles.push(new CanvasParticle(cx, cy, true));
+      }
+    }
+
+    // INTRO SEQUENCE TIMELINE
+    function runLoaderTimeline() {
+      setTimeout(() => {
+        if (loaderBar) loaderBar.style.width = '100%';
+        if (logoText) logoText.classList.add('active');
+      }, 150);
+
+      setTimeout(() => {
+        if (logoStar) logoStar.classList.add('ignite');
+        if (starAura) starAura.classList.add('ignite');
+        triggerStarBurst();
+      }, 750);
+
+      setTimeout(() => {
+        if (logoSub) logoSub.classList.add('active');
+      }, 1450);
+
+      setTimeout(triggerStarBurst, 2000);
+
+      setTimeout(startGlideTransition, 2650);
+    }
+
+    // GLIDE TRANSITION ENGINE
+    function startGlideTransition() {
+      if (!isLoaderActive) return;
+
+      if (loaderControls) loaderControls.classList.add('fade-out');
+
+      document.body.classList.remove('is-intro');
+      document.body.classList.add('page-active');
+
+      setTimeout(typeBio, 600);
+
+      // Full cleanup: stop loop, remove canvas from DOM, free memory
+      setTimeout(() => {
+        isLoaderActive = false;
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        if (introLoader) introLoader.style.display = 'none';
+        // Remove canvas entirely to free GPU memory
+        if (loaderCanvas && loaderCanvas.parentNode) {
+          loaderCanvas.width = 0;
+          loaderCanvas.height = 0;
+          loaderCanvas.parentNode.removeChild(loaderCanvas);
+        }
+        ctx = null;
+        loaderParticles.length = 0;
+        loaderParticles = null;
+        // Remove resize listener since canvas is gone
+        window.removeEventListener('resize', resizeCanvas);
+      }, 1850);
+    }
+
+    if (introLoader) introLoader.addEventListener('click', startGlideTransition);
+
+    runLoaderTimeline();
+
+    // ==========================================
+    //  1. TYPING ANIMATION — Bio text
+    // ==========================================
+    const bioEl = document.getElementById('bioText');
+    const bioLines = [
+      '✨ Beauty · Selfcare · Lifestyle ✨',
+      '💖 Más que productos, es una forma de sentirte bien. 💖',
+      '📦 Envíos a todo el Perú 📦'
+    ];
+    let lineIdx = 0, charIdx = 0, isDeleting = false, isPaused = false;
+    // Pre-create cursor span to avoid innerHTML parsing overhead
+    const CURSOR_HTML = '<span class="typing-cursor"></span>';
+
+    function typeBio() {
+      if (!bioEl || isPaused) return;
+      const chars = [...bioLines[lineIdx]]; // Unicode-aware: treats emoji as single char
+
+      if (!isDeleting) {
+        charIdx++;
+        bioEl.innerHTML = chars.slice(0, charIdx).join('') + CURSOR_HTML;
+
+        if (charIdx >= chars.length) {
+          isPaused = true;
+          setTimeout(() => {
+            isPaused = false;
+            isDeleting = true;
+            typeBio();
+          }, 3000);
+          return;
+        }
+        setTimeout(typeBio, 75 + Math.random() * 35);
+      } else {
+        charIdx--;
+        bioEl.innerHTML = chars.slice(0, charIdx).join('') + CURSOR_HTML;
+
+        if (charIdx <= 0) {
+          isDeleting = false;
+          lineIdx = (lineIdx + 1) % bioLines.length;
+          setTimeout(typeBio, 450);
+          return;
+        }
+        setTimeout(typeBio, 35);
+      }
+    }
+
+    // ==========================================
+    //  2. FLOATING PARTICLES (reduced from 25 to 16)
+    // ==========================================
+    (function () {
+      const c = document.getElementById('particles');
+      const syms = ['✦','✧','·','◦','✿','◈','˙','✸'];
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < 8; i++) {
+        const el = document.createElement('span');
+        el.className = 'particle';
+        el.textContent = syms[(Math.random() * syms.length) | 0];
+        const x = Math.random()*100, dur = 7+Math.random()*11, dly = Math.random()*14, sz = 7+Math.random()*12;
+        el.style.cssText = `left:${x}%;font-size:${sz}px;--dur:${dur}s;--delay:${dly}s;animation-delay:${dly}s;`;
+        frag.appendChild(el);
+      }
+      c.appendChild(frag);
+    })();
+
+    // ==========================================
+    //  3. CURSOR-FOLLOWING GLOW (desktop only)
+    //     Only runs rAF when mouse is actually moving
+    // ==========================================
+    
+
+    // ==========================================
+    //  4-7. UNIFIED CARD INTERACTIONS
+    //  Single loop: tilt, glow follow, sparkles, shine, ripple
+    // ==========================================
+    const allCards = document.querySelectorAll('.link-card');
+
+    allCards.forEach(card => {
+      // Cache child element refs once
+      const glowEl = card.querySelector('.card-glow');
+      const shineEl = card.querySelector('.shine');
+      const sparkleContainer = card.querySelector('.sparkle-container');
+      let sparkleInterval = null;
+
+      // --- 3D TILT + GLOW FOLLOW ---
+      function handleMove(x, y) {
+        const rect = card.getBoundingClientRect();
+        const px = (x - rect.left) / rect.width;
+        const py = (y - rect.top) / rect.height;
+        const tiltX = (py - 0.5) * -12;
+        const tiltY = (px - 0.5) * 12;
+        card.style.transform = `perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.03)`;
+        if (glowEl) {
+          glowEl.style.setProperty('--glow-x', (px * 100) + '%');
+          glowEl.style.setProperty('--glow-y', (py * 100) + '%');
+        }
+      }
+
+      // --- SPARKLE EMIT (reduced from 5 to 3 sparkles) ---
+      function emitSparkles(x, y) {
+        const rect = card.getBoundingClientRect();
+        const lx = x - rect.left, ly = y - rect.top;
+        for (let i = 0; i < 3; i++) {
+          const s = document.createElement('span');
+          s.className = 'sparkle';
+          s.textContent = SPARKLE_SYMS[(Math.random() * 4) | 0];
+          const angle = Math.random() * TWO_PI;
+          const dist  = 20 + Math.random() * 40;
+          s.style.cssText = `left:${lx}px;top:${ly}px;--sx:${Math.cos(angle)*dist}px;--sy:${Math.sin(angle)*dist}px;font-size:${8+Math.random()*8}px;`;
+          sparkleContainer.appendChild(s);
+          setTimeout(() => s.remove(), 900);
+        }
+      }
+
+      // --- EVENT LISTENERS (all in one pass) ---
+      card.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
+      card.addEventListener('touchmove', e => {
+        handleMove(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+
+      card.addEventListener('mouseenter', e => {
+        // Shine sweep (using transform instead of left — GPU composited)
+        shineEl.style.transition = 'none';
+        shineEl.style.transform = 'translateX(-200%) skewX(-20deg)';
+        requestAnimationFrame(() => {
+          shineEl.style.transition = 'transform 0.7s ease';
+          shineEl.style.transform = 'translateX(350%) skewX(-20deg)';
+        });
+
+        // Sparkle burst on enter
+        emitSparkles(e.clientX, e.clientY);
+        sparkleInterval = setInterval(() => {
+          const rect = card.getBoundingClientRect();
+          emitSparkles(
+            rect.left + Math.random() * rect.width,
+            rect.top + Math.random() * rect.height
+          );
+        }, 700); // Slightly slower interval (600→700ms)
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+        clearInterval(sparkleInterval);
+      });
+
+      card.addEventListener('touchend', () => {
+        card.style.transform = '';
+      });
+
+      card.addEventListener('touchstart', e => {
+        emitSparkles(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+
+      // --- RIPPLE on click ---
+      card.addEventListener('click', function(e) {
+        const r = document.createElement('span');
+        r.className = 'ripple';
+        const rect = this.getBoundingClientRect();
+        const sz = Math.max(rect.width, rect.height) * 1.5;
+        r.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX-rect.left-sz/2}px;top:${e.clientY-rect.top-sz/2}px;animation:rippleA 0.65s linear;`;
+        this.appendChild(r);
+        setTimeout(() => r.remove(), 700);
+      });
+    });
+
+    // ==========================================
+    //  8. SUBTLE PARALLAX (cached DOM refs)
+    // ==========================================
+    const pageBg = document.querySelector('.page-bg');
+    const glowOrbs = document.querySelectorAll('.glow-orb');
+    // Pre-compute multipliers
+    const orbMultipliers = [];
+    glowOrbs.forEach((_, i) => orbMultipliers.push(0.05 + i * 0.03));
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          pageBg.style.transform = `translate3d(0, ${y * 0.12}px, 0)`;
+          for (let i = 0; i < glowOrbs.length; i++) {
+            glowOrbs[i].style.transform = `translate3d(0, ${y * orbMultipliers[i]}px, 0)`;
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+  })();
+  </script>
+
+</body>
+</html>
